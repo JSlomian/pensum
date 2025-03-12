@@ -22,7 +22,8 @@ RUN apk add --no-cache \
     zlib-dev \
     g++ \
     make \
-    linux-headers # Add this line
+    linux-headers \
+    postgresql-client
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
@@ -48,9 +49,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY . .
 
 RUN composer install
-RUN php bin/console doctrine:database:create
-RUN php bin/console doctrine:migrations:migrate
-RUN php bin/console doctrine:fixtures:load
+
+COPY ./bin/wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 # Clear cache
 # RUN rm -rf /var/cache/apk/*
@@ -69,5 +70,6 @@ RUN chown -R www-data:www-data /var/www/api \
 # Expose the port on which PHP-FPM runs
 EXPOSE 9000
 
-# Start PHP-FPM server
-CMD ["php-fpm"]
+COPY ./bin/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

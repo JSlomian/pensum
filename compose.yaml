@@ -6,6 +6,7 @@ services:
       - 80:80
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./api/public:/var/www/api/public
     depends_on:
       - backend
       - frontend
@@ -15,7 +16,9 @@ services:
   backend:
     working_dir: /var/www/api
     environment:
-      - APP_ENV=PROD
+      - APP_ENV=prod
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/api?serverVersion=16&charset=utf8
+      - CORS_ALLOW_ORIGIN=^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$
     build: 
       context: ./api
       dockerfile: ../docker/php/Dockerfile
@@ -28,6 +31,9 @@ services:
 
   frontend:
     working_dir: /var/www/app
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - API_URL=backend
     build:
       context: ./app
       dockerfile: ../docker/node/Dockerfile
