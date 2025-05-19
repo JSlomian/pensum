@@ -53,6 +53,10 @@ RUN composer install
 COPY ./bin/wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 
+RUN php bin/console lexik:jwt:generate-keypair \
+    --no-interaction \
+    --skip-if-exists
+
 # Clear cache
 # RUN rm -rf /var/cache/apk/*
 # RUN rm -rf /var/www/app/var
