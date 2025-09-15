@@ -38,7 +38,8 @@ services:
       - LETSENCRYPT_HOST=api.jslomian.dev
       - APP_ENV=prod
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/api?serverVersion=16&charset=utf8
-      - CORS_ALLOW_ORIGIN=^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$
+     # - CORS_ALLOW_ORIGIN=^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$
+      - CORS_ALLOW_ORIGIN=^https://app\.jslomian\.dev$
     build: 
       context: ./api
       dockerfile: ../docker/php/Dockerfile
