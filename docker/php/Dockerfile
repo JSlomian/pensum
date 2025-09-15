@@ -56,8 +56,8 @@ RUN mkdir -p /var/www/api/var/cache/prod /var/www/api/var/log \
 
 
  
-RUN composer install 
-#RUN composer install --no-dev --optimize-autoloader --no-interaction --verbose
+#RUN composer install 
+RUN composer install --no-dev --optimize-autoloader
 
 COPY ./bin/wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/wait-for-it.sh
@@ -73,7 +73,7 @@ RUN php bin/console lexik:jwt:generate-keypair \
 
 # RUN mkdir /var/www/api
 # RUN mkdir /var/www/api/public
-RUN certbot --nginx -d api.localhost
+#RUN certbot --nginx -d api.localhost
 
 #   && chmod -R 755 /var/www/api/public
     # Ensure runtime directories exist with correct permissions
