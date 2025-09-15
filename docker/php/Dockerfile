@@ -40,9 +40,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         xsl \
         zip \
         sockets \
-        pcntl \
-        certbot \
-        certbot-nginx
+        pcntl
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
