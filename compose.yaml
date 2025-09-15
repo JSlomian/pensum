@@ -4,18 +4,38 @@ services:
     working_dir: /var/www/
     ports:
       - 80:80
+      - 443:443
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - ./api/public:/var/www/api/public
+      - ./app/.nuxt/dist/:/var/www/app/public
     depends_on:
       - backend
       - frontend
     networks:
       - app-network
 
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: >
+      sh -c "trap exit TERM; 
+      while :; do
+        certbot certonly --webroot --webroot-path=/var/www/certbot
+        -d api.jslomian.dev -d app.jslomian.dev
+        --email contact@jslomian.dev --agree-tos --no-eff-email || true;
+        sleep 12h & wait $${!};
+      done"
+
   backend:
     working_dir: /var/www/api
+    restart: always
     environment:
+      - VIRTUAL_HOST=api.jslomian.dev
+      - LETSENCRYPT_HOST=api.jslomian.dev
       - APP_ENV=prod
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/api?serverVersion=16&charset=utf8
       - CORS_ALLOW_ORIGIN=^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$
@@ -32,8 +52,10 @@ services:
   frontend:
     working_dir: /var/www/app
     environment:
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - VIRTUAL_HOST=app.jslomian.dev
+      - LETSENCRYPT_HOST=app.jslomian.dev
       - API_URL=backend
+    restart: always
     build:
       context: ./app
       dockerfile: ../docker/node/Dockerfile

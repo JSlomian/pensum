@@ -25,7 +25,6 @@ RUN apk add --no-cache \
     linux-headers \
     postgresql-client
 
-# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
         bcmath \
@@ -41,14 +40,26 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         xsl \
         zip \
         sockets \
-        pcntl
+        pcntl \
+        certbot \
+        certbot-nginx
 
-# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY . .
+RUN mkdir -p /var/www/api/var/cache/prod /var/www/api/var/log \
+    && chown -R www-data:www-data /var/www/api/var/cache/prod
+#RUN chown -R www-data:www-data /var/www/api && chmod -R 755 /var/www/api
+#RUN mkdir -p /var/www/api/var/cache /var/www/api/var/log \
+ #   && chown -R www-data:www-data /var/www/api/var \
+  #  && chmod -R 775 /var/www/api/var \
+   # && chown -R www-data:www-data /var/www/api/var/cache \
+    #&& chmod -R 775 /var/www/api/var/cache 
 
-RUN composer install
+
+ 
+RUN composer install 
+#RUN composer install --no-dev --optimize-autoloader --no-interaction --verbose
 
 COPY ./bin/wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/wait-for-it.sh
@@ -64,13 +75,10 @@ RUN php bin/console lexik:jwt:generate-keypair \
 
 # RUN mkdir /var/www/api
 # RUN mkdir /var/www/api/public
+RUN certbot --nginx -d api.localhost
 
-# Permissions (adjust as needed for your Symfony app)
-RUN chown -R www-data:www-data /var/www/api \
-    && chmod -R 755 /var/www/api \
-    && chmod -R 755 /var/www/api/public
-    
-
+#   && chmod -R 755 /var/www/api/public
+    # Ensure runtime directories exist with correct permissions
 # Expose the port on which PHP-FPM runs
 EXPOSE 9000
 
