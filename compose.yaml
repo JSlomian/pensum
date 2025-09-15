@@ -38,9 +38,6 @@ services:
     environment:
       - VIRTUAL_HOST=api.jslomian.dev
       - LETSENCRYPT_HOST=api.jslomian.dev
-      - APP_ENV=prod
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/api?serverVersion=16&charset=utf8
-      - CORS_ALLOW_ORIGIN=https://app.jslomian.dev
     build: 
       context: ./api
       dockerfile: ../docker/php/Dockerfile
@@ -56,7 +53,6 @@ services:
     environment:
       - VIRTUAL_HOST=app.jslomian.dev
       - LETSENCRYPT_HOST=app.jslomian.dev
-      - API_URL=backend
     restart: always
     build:
       context: ./app
