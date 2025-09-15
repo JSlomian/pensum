@@ -10,6 +10,7 @@ services:
       - ./api/public:/var/www/api/public
       - ./app/.nuxt/dist/:/var/www/app/public
       - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - backend
       - frontend
