@@ -56,8 +56,8 @@ RUN mkdir -p /var/www/api/var/cache/prod /var/www/api/var/log \
 
 
  
-#RUN composer install 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install 
+#RUN composer install --no-dev --optimize-autoloader
 
 COPY ./bin/wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/wait-for-it.sh
