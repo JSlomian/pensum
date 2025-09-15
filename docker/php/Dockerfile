@@ -56,11 +56,8 @@ RUN mkdir -p /var/www/api/var/cache/prod /var/www/api/var/log \
 
 
  
-RUN composer install 
-
-COPY ./bin/wait-for-it.sh /usr/local/bin/wait-for-it.sh
-RUN chmod +x /usr/local/bin/wait-for-it.sh
-
+RUN composer install --no-dev --optimize-autoloader
+RUN composer dump-env prod
 RUN php bin/console lexik:jwt:generate-keypair \
     --no-interaction \
     --skip-if-exists
@@ -68,11 +65,5 @@ RUN php bin/console lexik:jwt:generate-keypair \
 # Expose the port on which PHP-FPM runs
 EXPOSE 9000
 
-COPY ./bin/db.sh /usr/local/bin/db.sh
-RUN chmod +x /usr/local/bin/db.sh
-RUN /usr/local/bin/db.sh
-RUN rm -rf vendor/
-RUN composer install --no-dev --optimize-autoloader
-RUN composer dump-env prod
 RUN echo "Starting PHP-FPM..."
 CMD ["php-fpm"]
