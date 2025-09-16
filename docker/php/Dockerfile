@@ -61,7 +61,8 @@ RUN composer dump-env prod
 RUN php bin/console lexik:jwt:generate-keypair \
     --no-interaction \
     --skip-if-exists
-
+RUN php bin/console cache:clear --env=prod
+RUN php bin/console cache:warmup --env=prod
 # Expose the port on which PHP-FPM runs
 EXPOSE 9000
 

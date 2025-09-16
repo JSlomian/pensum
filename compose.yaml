@@ -52,6 +52,7 @@ services:
     working_dir: /var/www/app
     environment:
       - VIRTUAL_HOST=app.jslomian.dev
+      - NODE_TLS_REJECT_UNAUTHORIZED=0     
       - LETSENCRYPT_HOST=app.jslomian.dev
     restart: always
     build:
