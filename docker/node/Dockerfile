@@ -1,5 +1,6 @@
 # Use Node.js 22 LTS Alpine as the base image
 FROM node:22-alpine
+RUN apk add --no-cache ca-certificates
 
 # Set the working directory inside the container
 WORKDIR /var/www/app
